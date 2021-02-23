@@ -31,4 +31,6 @@
 *.out
 *.app
 
-.vs/
+.vs
+x64
+Bullet_Engine/x64
