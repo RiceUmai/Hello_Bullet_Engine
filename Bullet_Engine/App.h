@@ -8,6 +8,10 @@
 #include <bullet/BulletDynamics/Dynamics/btDynamicsWorld.h>
 
 #include "OpenGLMotionState.h"
+#include "GameObject.h"
+#include <vector>
+
+typedef std::vector<GameObject*> GameObjects;
 
 class App
 {
@@ -35,6 +39,13 @@ public:
 
 	void UpadateCamera();
 
+	void DrawShape(btScalar* transform, const btCollisionShape* pShape, const btVector3 &color);
+	GameObject* CreateGameObject(btCollisionShape* pShape,
+		const float& mass,
+		const btVector3& color = btVector3(1.0f, 1.0f, 1.0f),
+		const btVector3& initPosition = btVector3(1.0f, 1.0f, 1.0f),
+		const btQuaternion& initRotaion = btQuaternion(1.0f, 1.0f, 1.0f));
+
 protected:
 	btVector3 m_cameraPosition;
 	btVector3 m_cameraTarget;
@@ -51,8 +62,10 @@ protected:
 	btConstraintSolver* m_pSolver;
 	btDynamicsWorld* m_pWorld;
 
-	OpenGLMotionState* m_pMotionState;
-	OpenGLMotionState* m_pMotionState2;
+	//OpenGLMotionState* m_pMotionState;
+	//OpenGLMotionState* m_pMotionState2;
 	btClock m_clock;
+
+	GameObjects m_objects;
 };
 
