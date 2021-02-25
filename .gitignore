@@ -30,5 +30,6 @@
 *.out
 *.app
 
+*lib/Debug
 .vs
 x64
