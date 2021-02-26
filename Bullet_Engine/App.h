@@ -24,6 +24,9 @@ public:
 	virtual void Motion(int x, int y);
 	virtual void Display();
 
+	virtual void InitPhysics() {};
+	virtual void ShutdownPhysics() {};
+
 	void UpadateCamera();
 	void RotateCamera(float &angle, float value);
 	void ZoomCamera(float distance);
@@ -42,5 +45,11 @@ protected:
 
 	int m_screenWidth;
 	int m_screenHeight;
+
+	btBroadphaseInterface* m_pBroadphase;
+	btCollisionConfiguration* m_pCollisionConfiguration;
+	btCollisionDispatcher* m_pDispatcher;
+	btConstraintSolver* m_pSolver;
+	btDynamicsWorld* m_pWorld;
 };
 

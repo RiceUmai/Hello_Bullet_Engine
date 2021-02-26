@@ -148,10 +148,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="BasicDemo.cpp" />
     <ClCompile Include="Bullet_Engine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
+    <ClInclude Include="BasicDemo.h" />
     <ClInclude Include="Callback.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

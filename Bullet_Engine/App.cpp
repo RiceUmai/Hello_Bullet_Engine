@@ -11,12 +11,20 @@ App::App() :
 	m_cameraYaw(0.0f),
 	m_upVector(0.0f, 1.0f, 0.0f),
 	m_nearPlane(1.0f),
-	m_farPlane(1000.0f)
+	m_farPlane(1000.0f),
+	//===================
+	//Bullet Engine init variable
+	m_pBroadphase(0),
+	m_pCollisionConfiguration(0),
+	m_pDispatcher(0),
+	m_pSolver(0),
+	m_pWorld(0)
 {
 }
 
 App::~App()
 {
+	ShutdownPhysics();
 }
 
 void App::init()
@@ -41,6 +49,7 @@ void App::init()
 	glDepthFunc(GL_LESS);
 
 	glClearColor(0.6f, 0.65f, 0.85f, 0);
+	InitPhysics();
 }
 
 void App::Keyboard(unsigned char key, int x, int y)
