@@ -2,11 +2,11 @@
 
 void BasicDemo::InitPhysics()
 {
-	m_pCollisionConfigureation = new btDefaultCollisionConfiguration();
-	m_pDispatcher = new btCollisionDispatcher(m_pCollisionConfigureation);
+	m_pCollisionConfiguration = new btDefaultCollisionConfiguration();
+	m_pDispatcher = new btCollisionDispatcher(m_pCollisionConfiguration);
 	m_pBroadphase = new btDbvtBroadphase();
 	m_pSolver = new btSequentialImpulseConstraintSolver();
-	m_pWorld = new btDiscreteDynamicsWorld(m_pDispatcher, m_pBroadphase, m_pSolver, m_pCollisionConfigureation);
+	m_pWorld = new btDiscreteDynamicsWorld(m_pDispatcher, m_pBroadphase, m_pSolver, m_pCollisionConfiguration);
 
 	CreateObjects();
 }
@@ -17,7 +17,7 @@ void BasicDemo::ShutdownPysics()
 	delete m_pSolver;
 	delete m_pBroadphase;
 	delete m_pDispatcher;
-	delete m_pCollisionConfigureation;
+	delete m_pCollisionConfiguration;
 }
 
 void BasicDemo::CreateObjects()
@@ -34,10 +34,10 @@ void BasicDemo::CreateObjects()
 	//btRigidBody* pRigidBody = new btRigidBody(rbinfo);
 	//m_pWorld->addRigidBody(pRigidBody);
 
-	/*ADD*/	CreateGameObject(new btBoxShape(btVector3(100, 1, 100)), 0, btVector3(0.2f, 0.6f, 0.6f), btVector3(0.0f, 0.0f, 0.0f));
+	/*ADD*/	CreateGameObject(new btBoxShape(btVector3(5, 5, 5)), 0, btVector3(0.2f, 0.6f, 0.6f), btVector3(0.0f, 0.0f, 0.0f));
 	/*ADD*/
 	/*ADD*/	// create our original red box
-	/*ADD*/	CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0, btVector3(1.0f, 0.2f, 0.2f), btVector3(0.0f, 10.0f, 0.0f));
+	/*ADD*/	CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 0, btVector3(1.0f, 0.2f, 0.2f), btVector3(0.0f, 10.0f, 0.0f));
 	/*ADD*/
 	/*ADD*/	// create a second box
 	/*ADD*/	CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0, btVector3(0.0f, 0.2f, 0.8f), btVector3(0.0f, 5.0f, 0.0f));

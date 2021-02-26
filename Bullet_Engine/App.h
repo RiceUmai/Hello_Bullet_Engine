@@ -39,6 +39,7 @@ public:
 
 	void UpadateCamera();
 
+	void DrawBox(const btVector3& halfSize);
 	void DrawShape(btScalar* transform, const btCollisionShape* pShape, const btVector3 &color);
 	GameObject* CreateGameObject(btCollisionShape* pShape,
 		const float& mass,
@@ -52,12 +53,15 @@ protected:
 	float m_nearPlane;
 	float m_farPlane;
 	btVector3 m_upVector;
+	float m_cameraDistance;
+	float m_cameraPitch;
+	float m_cameraYaw;
 
 	int m_screenWidth;
 	int m_screenHeight;
 
 	btBroadphaseInterface* m_pBroadphase;
-	btCollisionConfiguration* m_pCollisionConfigureation;
+	btCollisionConfiguration* m_pCollisionConfiguration;
 	btCollisionDispatcher* m_pDispatcher;
 	btConstraintSolver* m_pSolver;
 	btDynamicsWorld* m_pWorld;
