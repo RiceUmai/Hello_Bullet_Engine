@@ -1,7 +1,11 @@
 #include "App.h"
 
-App::App() : m_cameraPosition(10.0f, 5.0f, 0.0f), m_cameraTarget(0.0f, 0.0f, 0.0f), 
-			 m_upVector(0.0f, 1.0f, 0.0f), m_nearPlane(1.0f), m_farPlane(1000.0f)
+App::App() : 
+m_cameraPosition(10.0f, 5.0f, 0.0f),
+m_cameraTarget(0.0f, 0.0f, 0.0f), 
+m_upVector(0.0f, 1.0f, 0.0f),
+m_nearPlane(1.0f),
+m_farPlane(1000.0f)
 {
 }
 
@@ -11,6 +15,25 @@ App::~App()
 
 void App::init()
 {
+	GLfloat ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+	GLfloat diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	GLfloat specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	GLfloat position[] = { 5.0f, 10.0f, 1.0f, 1.0f };
+
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+	glLightfv(GL_LIGHT0, GL_POSITION, position);
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_COLOR_MATERIAL);
+
+	glShadeModel(GL_SMOOTH);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+
 	glClearColor(0.6f, 0.65f, 0.85f, 0);
 }
 
@@ -44,7 +67,8 @@ void App::Idle()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	UpadateCamera();
 	
-	glutSolidCube(1);
+	DrawBox(btVector3(1,1,1));
+	//glutSolidCube(1);
 	glutSwapBuffers();
 }
 
@@ -78,4 +102,56 @@ void App::UpadateCamera()
 	gluLookAt(m_cameraPosition[0], m_cameraPosition[1], m_cameraPosition[2],
 			  m_cameraTarget[0],   m_cameraTarget[1],   m_cameraTarget[2],
 			  m_upVector.getX(),   m_upVector.getY(),   m_upVector.getZ());
+}
+
+void App::DrawBox(const btVector3& halfSize, const btVector3& color)
+{
+	float halfWidth = halfSize.x();
+	float halfHeight = halfSize.y();
+	float halfDepth = halfSize.z();
+
+	glColor3f(color.x(), color.y(), color.z());
+	
+	btVector3 vertices[8] = {
+	btVector3(halfWidth,halfHeight,halfDepth),
+	btVector3(-halfWidth,halfHeight,halfDepth),
+	btVector3(halfWidth,-halfHeight,halfDepth),
+	btVector3(-halfWidth,-halfHeight,halfDepth),
+	btVector3(halfWidth,halfHeight,-halfDepth),
+	btVector3(-halfWidth,halfHeight,-halfDepth),
+	btVector3(halfWidth,-halfHeight,-halfDepth),
+	btVector3(-halfWidth,-halfHeight,-halfDepth)};
+
+	static int indices[36] = {
+		0,1,2,
+		3,2,1,
+		4,0,6,
+		6,0,2,
+		5,1,4,
+		4,1,0,
+		7,3,1,
+		7,1,5,
+		5,4,7,
+		7,4,6,
+		7,2,3,
+		7,6,2};
+
+	glBegin(GL_TRIANGLES);
+
+	for (int i = 0; i < 36; i +=3)
+	{
+		const btVector3& vert1 = vertices[indices[i]];
+		const btVector3& vert2 = vertices[indices[i+1]];
+		const btVector3& vert3 = vertices[indices[i+2]];
+	
+		btVector3 normal = (vert3 - vert1).cross(vert2 - vert1);
+		normal.normalize();
+
+		glNormal3f(normal.x(), normal.y(), normal.z());
+
+		glVertex3f(vert1.x(), vert1.y(), vert1.z());
+		glVertex3f(vert2.x(), vert2.y(), vert2.z());
+		glVertex3f(vert3.x(), vert3.y(), vert3.z());
+	}
+	glEnd();
 }
