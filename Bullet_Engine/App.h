@@ -25,12 +25,17 @@ public:
 	virtual void Display();
 
 	void UpadateCamera();
+	void RotateCamera(float &angle, float value);
+	void ZoomCamera(float distance);
 
 	void DrawBox(const btVector3 &halfSize, const btVector3 &color = btVector3(1.0f, 1.0f, 1.0f));
 
 protected:
 	btVector3 m_cameraPosition;
 	btVector3 m_cameraTarget;
+	float m_cameraDistance;
+	float m_cameraPitch;
+	float m_cameraYaw;
 	float m_nearPlane;
 	float m_farPlane;
 	btVector3 m_upVector;
