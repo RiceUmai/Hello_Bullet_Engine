@@ -155,6 +155,7 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="BasicDemo.h" />
     <ClInclude Include="Callback.h" />
+    <ClInclude Include="OpenGLMotionState.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

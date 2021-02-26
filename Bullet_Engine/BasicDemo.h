@@ -8,5 +8,7 @@ class BasicDemo : public App
 public:
 	virtual void InitPhysics() override;
 	virtual void ShutdownPhysics() override;
+
+	void CreateObjects();
 };
 

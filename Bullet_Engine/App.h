@@ -4,7 +4,8 @@
 #include <GL/GL.h>
 #include <GL/freeglut.h>
 
-#include <bullet/btBulletDynamicsCommon.h>
+#include <btBulletDynamicsCommon.h>
+#include "OpenGLMotionState.h"
 
 class App
 {
@@ -24,6 +25,9 @@ public:
 	virtual void Motion(int x, int y);
 	virtual void Display();
 
+	virtual void RenderScene();
+	virtual void UpdateScene(float dt);
+
 	virtual void InitPhysics() {};
 	virtual void ShutdownPhysics() {};
 
@@ -31,7 +35,7 @@ public:
 	void RotateCamera(float &angle, float value);
 	void ZoomCamera(float distance);
 
-	void DrawBox(const btVector3 &halfSize, const btVector3 &color = btVector3(1.0f, 1.0f, 1.0f));
+	void DrawBox(const btScalar* transform, const btVector3 &halfSize, const btVector3 &color = btVector3(1.0f, 1.0f, 1.0f));
 
 protected:
 	btVector3 m_cameraPosition;
@@ -51,5 +55,8 @@ protected:
 	btCollisionDispatcher* m_pDispatcher;
 	btConstraintSolver* m_pSolver;
 	btDynamicsWorld* m_pWorld;
+
+	OpenGLMotionState* m_pMotionState;
+	btClock m_clock;
 };
 

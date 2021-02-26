@@ -18,7 +18,8 @@ App::App() :
 	m_pCollisionConfiguration(0),
 	m_pDispatcher(0),
 	m_pSolver(0),
-	m_pWorld(0)
+	m_pWorld(0),
+	m_pMotionState(0)
 {
 }
 
@@ -110,7 +111,12 @@ void App::Idle()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	UpadateCamera();
 
-	DrawBox(btVector3(5, 5, 5));
+	float dt = m_clock.getTimeMilliseconds();
+	m_clock.reset();
+	UpdateScene(dt/1000.0f);
+
+	//DrawBox(btVector3(5, 5, 5));
+	RenderScene();
 	glutSwapBuffers();
 }
 
@@ -128,6 +134,24 @@ void App::Motion(int x, int y)
 
 void App::Display()
 {
+}
+
+void App::RenderScene()
+{
+	btScalar transform[16];
+	if (m_pMotionState)
+	{
+		m_pMotionState->GetWorldTransform(transform);
+		DrawBox(transform, btVector3(1,1,1));
+	}
+}
+
+void App::UpdateScene(float dt)
+{
+	if (m_pWorld)
+	{
+		m_pWorld->stepSimulation(dt);
+	}
 }
 
 void App::UpadateCamera()
@@ -185,8 +209,11 @@ void App::ZoomCamera(float distance)
 	UpadateCamera();
 }
 
-void App::DrawBox(const btVector3& halfSize, const btVector3& color)
+void App::DrawBox(const btScalar* transform ,const btVector3& halfSize, const btVector3& color)
 {
+	glPushMatrix();
+	glMultMatrixf(transform);
+
 	float halfWidth = halfSize.x();
 	float halfHeight = halfSize.y();
 	float halfDepth = halfSize.z();
@@ -235,4 +262,5 @@ void App::DrawBox(const btVector3& halfSize, const btVector3& color)
 		glVertex3f(vert3.x(), vert3.y(), vert3.z());
 	}
 	glEnd();
+	glPopMatrix();
 }
