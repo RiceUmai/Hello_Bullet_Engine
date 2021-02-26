@@ -21,16 +21,20 @@ void BasicDemo::ShutdownPhysics()
 
 void BasicDemo::CreateObjects()
 {
-	btBoxShape* pBoxShape = new btBoxShape(btVector3(1.0f, 1.0f, 1.0f));
-	
-	btTransform transform;
-	transform.setIdentity();
-	transform.setOrigin(btVector3(0.0f, 0.0f, 0.0f));
+	//btBoxShape* pBoxShape = new btBoxShape(btVector3(1.0f, 1.0f, 1.0f));
+	//
+	//btTransform transform;
+	//transform.setIdentity();
+	//transform.setOrigin(btVector3(0.0f, 10.0f, 0.0f));
 
-	m_pMotionState = new OpenGLMotionState(transform);
-	
-	btRigidBody::btRigidBodyConstructionInfo rbInfo(1.0f, m_pMotionState, pBoxShape);
-	btRigidBody* pRigidBody = new btRigidBody(rbInfo);
+	//m_pMotionState = new OpenGLMotionState(transform);
+	//
+	//btRigidBody::btRigidBodyConstructionInfo rbInfo(1.0f, m_pMotionState, pBoxShape);
+	//btRigidBody* pRigidBody = new btRigidBody(rbInfo);
 
-	m_pWorld->addRigidBody(pRigidBody);
+	//m_pWorld->addRigidBody(pRigidBody);
+
+	CreateGameObject(new btBoxShape(btVector3(1, 50, 50)), 0.0f, btVector3(0.2f, 0.6f, 0.6f), btVector3(0.0f, 0.0f, 0.0f));
+	CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0f, btVector3(1.0f, 0.0f, 0.0f), btVector3(0.0f, 10.0f, 0.0f));
+	CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0f, btVector3(1.0f, 0.0f, 0.0f), btVector3(1.0f, 20.0f, 0.0f));
 }

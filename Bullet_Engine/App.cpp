@@ -12,14 +12,11 @@ App::App() :
 	m_upVector(0.0f, 1.0f, 0.0f),
 	m_nearPlane(1.0f),
 	m_farPlane(1000.0f),
-	//===================
-	//Bullet Engine init variable
 	m_pBroadphase(0),
 	m_pCollisionConfiguration(0),
 	m_pDispatcher(0),
 	m_pSolver(0),
-	m_pWorld(0),
-	m_pMotionState(0)
+	m_pWorld(0)
 {
 }
 
@@ -62,6 +59,10 @@ void App::Keyboard(unsigned char key, int x, int y)
 		break;
 	case 'x':
 		ZoomCamera(-CAMERA_STEP_SIZE);
+		break;
+	
+	case 27://ESC key
+		exit(0);
 		break;
 	default:
 		break;
@@ -139,10 +140,16 @@ void App::Display()
 void App::RenderScene()
 {
 	btScalar transform[16];
-	if (m_pMotionState)
+	//if (m_pWorld)
+	//{
+	//	m_pMotionState->GetWorldTransform(transform);
+	//	DrawBox(transform, btVector3(1,1,1), btVector3(1, 0, 0));
+	//}
+	for (GameObjects::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
 	{
-		m_pMotionState->GetWorldTransform(transform);
-		DrawBox(transform, btVector3(1,1,1));
+		GameObject* pObj = *i;
+		pObj->GetTransform(transform);
+		DrawShape(transform, pObj->GetShape(), pObj->GetColor());
 	}
 }
 
@@ -209,16 +216,16 @@ void App::ZoomCamera(float distance)
 	UpadateCamera();
 }
 
-void App::DrawBox(const btScalar* transform ,const btVector3& halfSize, const btVector3& color)
+void App::DrawBox(const btVector3 &halfSize)
 {
-	glPushMatrix();
-	glMultMatrixf(transform);
+	//glPushMatrix();
+	//glMultMatrixf(transform);
 
 	float halfWidth = halfSize.x();
 	float halfHeight = halfSize.y();
 	float halfDepth = halfSize.z();
 
-	glColor3f(color.x(), color.y(), color.z());
+	//glColor3f(color.x(), color.y(), color.z());
 
 	btVector3 vertices[8] = {
 	btVector3(halfWidth,halfHeight,halfDepth),
@@ -262,5 +269,40 @@ void App::DrawBox(const btScalar* transform ,const btVector3& halfSize, const bt
 		glVertex3f(vert3.x(), vert3.y(), vert3.z());
 	}
 	glEnd();
+	//glPopMatrix();
+}
+
+void App::DrawShape(btScalar* transform, const btCollisionShape* pShape, const btVector3& color)
+{
+	glColor3f(color.x(), color.y(), color.z());
+
+	glPushMatrix();
+	glMultMatrixf(transform);
+
+	switch (pShape->getShapeType())
+	{
+		case BOX_SHAPE_PROXYTYPE :
+		{
+			const btBoxShape* box = static_cast<const btBoxShape*>(pShape);
+			btVector3 halfSize = box->getHalfExtentsWithMargin();
+			DrawBox(halfSize);
+			break;
+		}
+
+		default:
+			break;
+		}
 	glPopMatrix();
+}
+
+GameObject* App::CreateGameObject(btCollisionShape* pShape, const float& mass, const btVector3& color, const btVector3& initialPotation, const btQuaternion& initialRotation)
+{
+	GameObject* pObject = new GameObject(pShape, mass, color, initialPotation, initialRotation);
+
+	m_objects.push_back(pObject);
+	if (m_pWorld)
+	{
+		m_pWorld->addRigidBody(pObject->GetRigidBody());
+	}
+	return pObject;
 }

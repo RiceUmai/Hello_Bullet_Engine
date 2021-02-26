@@ -4,8 +4,12 @@
 #include <GL/GL.h>
 #include <GL/freeglut.h>
 
-#include <btBulletDynamicsCommon.h>
+#include <BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
 #include "OpenGLMotionState.h"
+#include "GameObject.h"
+
+#include <vector>
+typedef std::vector<GameObject*> GameObjects;
 
 class App
 {
@@ -35,7 +39,13 @@ public:
 	void RotateCamera(float &angle, float value);
 	void ZoomCamera(float distance);
 
-	void DrawBox(const btScalar* transform, const btVector3 &halfSize, const btVector3 &color = btVector3(1.0f, 1.0f, 1.0f));
+	void DrawBox(const btVector3& halfSize);
+	void DrawShape(btScalar* transform, const btCollisionShape* pShape, const btVector3 &color);
+	GameObject* CreateGameObject(btCollisionShape* pShape,
+		const float& mass,
+		const btVector3 &color = btVector3(1.0f, 1.0f, 1.0f),
+		const btVector3 &initialPotation = btVector3(0.0f, 0.0f, 0.0f),
+		const btQuaternion &initialRotation = btQuaternion(0, 0, 1, 1));
 
 protected:
 	btVector3 m_cameraPosition;
@@ -56,7 +66,9 @@ protected:
 	btConstraintSolver* m_pSolver;
 	btDynamicsWorld* m_pWorld;
 
-	OpenGLMotionState* m_pMotionState;
+	//OpenGLMotionState* m_pMotionState;
 	btClock m_clock;
+
+	GameObjects m_objects;
 };
 
