@@ -7,9 +7,18 @@
 #include <BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
 #include "OpenGLMotionState.h"
 #include "GameObject.h"
+#include "DebugDrawer.h"
 
 #include <vector>
 typedef std::vector<GameObject*> GameObjects;
+
+#include <iostream>
+
+struct RayResult
+{
+	btRigidBody* pBody;
+	btVector3 hitPoint;
+};
 
 class App
 {
@@ -25,27 +34,40 @@ public:
 	virtual void Reshape(int w, int h);
 	virtual void Idle();
 	virtual void Mouse(int button, int state, int x, int y);
+	virtual void MouseWheel(int button, int dir, int x, int y);
 	virtual void PassiveMotion(int x, int y);
 	virtual void Motion(int x, int y);
 	virtual void Display();
 
-	virtual void RenderScene();
+	virtual void RenderScene(float dt);
 	virtual void UpdateScene(float dt);
 
 	virtual void InitPhysics() {};
 	virtual void ShutdownPhysics() {};
 
 	void UpadateCamera();
-	void RotateCamera(float &angle, float value);
+	void RotateCamera(float& angle, float value);
 	void ZoomCamera(float distance);
 
 	void DrawBox(const btVector3& halfSize);
-	void DrawShape(btScalar* transform, const btCollisionShape* pShape, const btVector3 &color);
+	void DrawShape(btScalar* transform, const btCollisionShape* pShape, const btVector3& color);
 	GameObject* CreateGameObject(btCollisionShape* pShape,
 		const float& mass,
-		const btVector3 &color = btVector3(1.0f, 1.0f, 1.0f),
-		const btVector3 &initialPotation = btVector3(0.0f, 0.0f, 0.0f),
-		const btQuaternion &initialRotation = btQuaternion(0, 0, 1, 1));
+		const btVector3& color = btVector3(1.0f, 1.0f, 1.0f),
+		const btVector3& initialPotation = btVector3(0.0f, 0.0f, 0.0f),
+		const btQuaternion& initialRotation = btQuaternion(0, 0, 1, 1));
+
+
+
+	void ShootBox(const btVector3& direction);
+	void DestroyGameObject(btRigidBody* pBody);
+	btVector3 GetPickingRay(int x, int y);
+	bool Raycast(const btVector3& startPosition, const btVector3& direction, RayResult& output);
+
+	//===========================
+	//Custom
+	//===========================
+	GameObject* FindGameObject(std::string name);
 
 protected:
 	btVector3 m_cameraPosition;
@@ -70,5 +92,13 @@ protected:
 	btClock m_clock;
 
 	GameObjects m_objects;
+	DebugDrawer* m_pDebugDrawer;
+
+	btVector3 CameraRight;
+	btVector3 CameraFront;
+
+	float DeltaTime;
+
+	GameObject* Player;
 };
 

@@ -1,6 +1,7 @@
 #pragma once
 #include <btBulletDynamicsCommon.h>
 #include "OpenGLMotionState.h"
+#include <iostream>
 
 class GameObject
 {
@@ -21,10 +22,43 @@ public:
 
 	btVector3 GetColor() { return m_color; }
 
+
+//=====================================
+//Custom
+//=====================================
+	std::string GetTag() { return Tag; }
+	std::string GetName() { return Name; }
+
+	void SetPosition(btVector3 Pos)
+	{
+		if (m_pBody)
+		{
+			btTransform transform;
+			m_pBody->getMotionState()->getWorldTransform(transform);
+			transform.setOrigin(Pos);
+			m_pBody->getMotionState()->setWorldTransform(transform);
+			m_pBody->setCenterOfMassTransform(transform);
+		}
+	}
+
+	void SetTag(std::string tag) { Tag = tag; }
+	void SetName(std::string name) { Name = name; }
+//=====================================
+//=====================================
+
 protected:
 	btCollisionShape* m_pShape;
 	btRigidBody* m_pBody;
 	OpenGLMotionState* m_pMotionState;
 	btVector3 m_color;
+
+//=====================================
+//Custom
+//=====================================
+	std::string Tag;
+	std::string Name;
+//=====================================
+//=====================================
+
 };
 

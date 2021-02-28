@@ -8,6 +8,10 @@ static void KeyboardCallback(unsigned char key, int x, int y)
 {
 	g_pApp->Keyboard(key, x, y);
 }
+static void KeyboardDownCallback(unsigned char key, int x, int y)
+{
+	g_pApp->Keyboard(key, x, y);
+}
 static void KeyboardUpCallback(unsigned char key, int x, int y)
 {
 	g_pApp->KeyboardUp(key, x, y);
@@ -18,7 +22,7 @@ static void SpecialCallback(int key, int x, int y)
 }
 static void SpeciaUpCallback(int key, int x, int y)
 {
-	g_pApp->SpeciaUp(key ,x, y);
+	g_pApp->SpeciaUp(key, x, y);
 }
 static void ReshapeCallback(int w, int y)
 {
@@ -32,6 +36,11 @@ static void MouseCallback(int button, int state, int x, int y)
 {
 	g_pApp->Mouse(button, state, x, y);
 }
+static void MouseWheel(int button, int dir, int x, int y)
+{
+	g_pApp->MouseWheel(button, dir, x, y);
+}
+
 static void PassiveMotionCallback(int x, int y)
 {
 	g_pApp->PassiveMotion(x, y);
@@ -57,7 +66,7 @@ int glutMain(int argc, char** argv, int width, int height, const char* title, Ap
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 
 	g_pApp->init();
-	
+
 	glutKeyboardFunc(KeyboardCallback);
 	glutKeyboardUpFunc(KeyboardUpCallback);
 	glutSpecialFunc(SpecialCallback);
@@ -65,6 +74,7 @@ int glutMain(int argc, char** argv, int width, int height, const char* title, Ap
 	glutReshapeFunc(ReshapeCallback);
 	glutIdleFunc(IdleCallback);
 	glutMouseFunc(MouseCallback);
+	glutMouseWheelFunc(MouseWheel);
 	glutPassiveMotionFunc(MotionCallback);
 	glutMotionFunc(MotionCallback);
 	glutDisplayFunc(DisplayCallback);

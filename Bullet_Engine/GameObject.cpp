@@ -5,6 +5,8 @@ GameObject::GameObject(btCollisionShape* pShape, float mass, const btVector3& co
 	m_pShape = pShape;
 	m_color = color;
 
+	Tag = "default";
+
 	btTransform transform;
 	transform.setIdentity();
 	transform.setOrigin(initialPosition);

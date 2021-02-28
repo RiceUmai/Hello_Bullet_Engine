@@ -7,6 +7,8 @@ void BasicDemo::InitPhysics()
 	m_pBroadphase = new btDbvtBroadphase();
 	m_pSolver = new btSequentialImpulseConstraintSolver();
 	m_pWorld = new btDiscreteDynamicsWorld(m_pDispatcher, m_pBroadphase, m_pSolver, m_pCollisionConfiguration);
+	m_pWorld->setGravity(btVector3(0, -10, 0));
+
 	CreateObjects();
 }
 
@@ -33,8 +35,15 @@ void BasicDemo::CreateObjects()
 	//btRigidBody* pRigidBody = new btRigidBody(rbInfo);
 
 	//m_pWorld->addRigidBody(pRigidBody);
+	
+	GameObject* m_Obj;
+	m_Obj = CreateGameObject(new btBoxShape(btVector3(1, 50, 50)), 0.0f, btVector3(0.2f, 0.6f, 0.6f), btVector3(0.0f, 0.0f, 0.0f));
+	m_Obj->SetTag("Ground");
+	m_Obj->SetName("Ground");
 
-	CreateGameObject(new btBoxShape(btVector3(1, 50, 50)), 0.0f, btVector3(0.2f, 0.6f, 0.6f), btVector3(0.0f, 0.0f, 0.0f));
+	m_Obj = CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0f, btVector3(0.0f, 1.0f, 0.0f), btVector3(10.0f, 5.0f, 0.0f));
+	m_Obj->SetTag("Player");
+	m_Obj->SetName("Player");
+
 	CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0f, btVector3(1.0f, 0.0f, 0.0f), btVector3(0.0f, 10.0f, 0.0f));
-	CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0f, btVector3(1.0f, 0.0f, 0.0f), btVector3(1.0f, 20.0f, 0.0f));
 }

@@ -150,12 +150,14 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="BasicDemo.cpp" />
     <ClCompile Include="Bullet_Engine.cpp" />
+    <ClCompile Include="DebugDrawer.cpp" />
     <ClCompile Include="GameObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="BasicDemo.h" />
     <ClInclude Include="Callback.h" />
+    <ClInclude Include="DebugDrawer.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="OpenGLMotionState.h" />
   </ItemGroup>
