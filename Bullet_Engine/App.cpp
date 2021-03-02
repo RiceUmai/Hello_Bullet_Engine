@@ -73,6 +73,9 @@ void App::Keyboard(unsigned char key, int x, int y)
 	case 'z':
 		m_pDebugDrawer->ToggleDebugFlag(btIDebugDraw::DBG_DrawWireframe);
 		break;
+	case 'x':
+		m_pDebugDrawer->ToggleDebugFlag(btIDebugDraw::DBG_DrawAabb);
+		break;
 
 	//======================================================
 	//Player movement
@@ -101,14 +104,13 @@ void App::Keyboard(unsigned char key, int x, int y)
 		Player->GetRigidBody()->applyCentralForce(velocity);
 		break;
 	}
+	//space bar
 	case ' ': {
 		btVector3 velocity = btVector3(0.0f, 50.0f, 0.0f);
 		Player->GetRigidBody()->applyCentralForce(velocity);
- 		std::cout << velocity.y() << std::endl;
 		break;
 	}
 	//======================================================
-	//space bar
 	case 't': {
 		RayResult result;
 		if (!Raycast(m_cameraPosition, GetPickingRay(x, y), result))
@@ -492,24 +494,24 @@ void App::CheckForCollisionEvents()
 
 void App::CollisionEvent(btRigidBody* pBody0, btRigidBody* pBody1)
 {
-	GameObject* pObj0 = FindGameObject(pBody0);
-	GameObject* pObj1 = FindGameObject(pBody1);
+	//GameObject* pObj0 = FindGameObject(pBody0);
+	//GameObject* pObj1 = FindGameObject(pBody1);
 
-	if (!pObj0 || !pObj1) return;
-	
-	pObj0->SetColor(btVector3(1.0, 1.0, 1.0));
-	pObj1->SetColor(btVector3(1.0, 1.0, 1.0));
+	//if (!pObj0 || !pObj1) return;
+	//
+	//pObj0->SetColor(btVector3(1.0, 1.0, 1.0));
+	//pObj1->SetColor(btVector3(1.0, 1.0, 1.0));
 }
 
 void App::SeparationEvent(btRigidBody* pBody0, btRigidBody* pBody1)
 {
-	GameObject* pObj0 = FindGameObject(pBody0);
-	GameObject* pObj1 = FindGameObject(pBody1);
-	
-	if (!pObj0 || !pObj1) return;
+	//GameObject* pObj0 = FindGameObject(pBody0);
+	//GameObject* pObj1 = FindGameObject(pBody1);
+	//
+	//if (!pObj0 || !pObj1) return;
 
-	pObj0->SetColor(btVector3(0.0, 0.0, 0.0));
-	pObj1->SetColor(btVector3(0.0, 0.0, 0.0));
+	//pObj0->SetColor(btVector3(0.0, 0.0, 0.0));
+	//pObj1->SetColor(btVector3(0.0, 0.0, 0.0));
 }
 
 GameObject* App::FindGameObject(std::string name)
