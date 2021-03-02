@@ -59,7 +59,7 @@ void App::init()
 	//==========================
 	//Custom
 	//==========================
-	Player = FindGameObject("Player");
+	//Player = FindGameObject("Player");
 
 	//==========================
 	//==========================
@@ -78,42 +78,11 @@ void App::Keyboard(unsigned char key, int x, int y)
 		break;
 
 	//======================================================
-	//Player movement
-	case 'w': {
-		//m_objects.back()->SetPosition(btVector3(10.0f, 100.0f, 10.0f));
-		btVector3 velocity =(CameraFront) * 50;
-		//m_objects.at(1)->GetRigidBody()->setLinearVelocity(velocity);
-		Player->GetRigidBody()->applyCentralForce(velocity);
-
-		break;
-	}
-	case 's': {
-		btVector3 velocity = (-CameraFront) * 50;
-		Player->GetRigidBody()->applyCentralForce(velocity);
-		break;
-	}
-		
-	case 'a': {
-		btVector3 velocity = (-CameraRight) * 50;
-		Player->GetRigidBody()->applyCentralForce(velocity);
-		break;
-	}
-
-	case 'd': {
-		btVector3 velocity = (CameraRight) * 50;
-		Player->GetRigidBody()->applyCentralForce(velocity);
-		break;
-	}
-	//space bar
-	case ' ': {
-		btVector3 velocity = btVector3(0.0f, 50.0f, 0.0f);
-		Player->GetRigidBody()->applyCentralForce(velocity);
-		break;
-	}
-	//======================================================
 	case 't': {
 		RayResult result;
 		if (!Raycast(m_cameraPosition, GetPickingRay(x, y), result))
+			return;
+		if (result.pBody == Player->GetRigidBody()) 
 			return;
 		DestroyGameObject(result.pBody);
 		break;
@@ -131,11 +100,10 @@ void App::KeyboardUp(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
-	case 'z':
-
+	case 'r':
+		GameObjectReset();
 		break;
 	case ' ': {
-		std::cout << "tesdt" << std::endl;
 		break;
 	}
 	default:
@@ -199,7 +167,18 @@ void App::Mouse(int button, int state, int x, int y)
 {
 	switch (button)
 	{
-	case 2: {
+	case GLUT_LEFT_BUTTON: {
+
+		if (state == 0)
+		{
+			RayResult result;
+			if (!Raycast(m_cameraPosition, GetPickingRay(x, y), result)) return;
+			PlayerSelection(result.pBody);
+		}
+		break;
+	}
+
+	case GLUT_RIGHT_BUTTON: {
 		
 		if (state == 0)
 		{
@@ -313,17 +292,20 @@ void App::UpadateCamera()
 	//=============================
 	//Custom
 	//=============================
-	btTransform transform;
-	Player->GetMotionState()->getWorldTransform(transform);
+	if (Player)
+	{
+		btTransform transform;
+		Player->GetMotionState()->getWorldTransform(transform);
 
-	m_cameraPosition[0] += transform.getOrigin().getX();
-	m_cameraPosition[1] += transform.getOrigin().getY();
-	m_cameraPosition[2] += transform.getOrigin().getZ();
+		m_cameraPosition[0] += transform.getOrigin().getX();
+		m_cameraPosition[1] += transform.getOrigin().getY();
+		m_cameraPosition[2] += transform.getOrigin().getZ();
+
+		m_cameraTarget[0] = transform.getOrigin().getX();
+		m_cameraTarget[1] = transform.getOrigin().getY();
+		m_cameraTarget[2] = transform.getOrigin().getZ();
+	}
 	
-	m_cameraTarget[0] = transform.getOrigin().getX();
-	m_cameraTarget[1] = transform.getOrigin().getY();
-	m_cameraTarget[2] = transform.getOrigin().getZ();
-
 	gluLookAt(m_cameraPosition[0], m_cameraPosition[1], m_cameraPosition[2],
 		m_cameraTarget[0], m_cameraTarget[1], m_cameraTarget[2],
 		m_upVector.getX(), m_upVector.getY(), m_upVector.getZ());
@@ -332,21 +314,25 @@ void App::UpadateCamera()
 	btVector3 rayFrom = m_cameraPosition;
 	btVector3 rayForward = (m_cameraTarget - m_cameraPosition);
 	CameraFront = rayForward.normalize();
-	rayForward *= m_farPlane;
+	//rayForward *= m_farPlane;
 
 	btVector3 ver = m_upVector;
 	btVector3 hor = rayForward.cross(ver);
 	CameraRight = hor.normalize();
+	CameraFront.setY(0);
 	//==============================
 }
 
+//=================================
+//Custom
 void App::RotateCamera(float& angle, float value)
 {
 	angle -= value;
-	if (angle < 0) angle += 360;
-	if (angle >= 360) angle -= 360;
+	if (angle <= -90) angle = -90;
+	if (angle >= 90) angle = 90;
 	UpadateCamera();
 }
+//=================================
 
 void App::ZoomCamera(float distance)
 {
@@ -358,7 +344,8 @@ void App::ZoomCamera(float distance)
 void App::ShootBox(const btVector3& direction)
 {
 	GameObject* pObject = CreateGameObject(new btBoxShape(btVector3(1.0f, 1.0f, 1.0f)), 1.0f, btVector3(0, 1, 1), m_cameraPosition);
-	
+	pObject->SetTag("Bullet");
+
 	btVector3 velocity = direction;
 	velocity.normalize();
 	velocity *= 25.0f;
@@ -376,6 +363,32 @@ void App::DestroyGameObject(btRigidBody* pBody)
 			m_pWorld->removeRigidBody(pObject->GetRigidBody());
 			m_objects.erase(iter);
 			delete pObject;
+			return;
+		}
+	}
+}
+
+void App::GameObjectReset()
+{
+	for (GameObjects::iterator iter = m_objects.begin(); iter != m_objects.end() - 1; ++iter)
+	{
+		GameObject* pObject = *iter;
+		m_pWorld->removeRigidBody(pObject->GetRigidBody());
+		delete pObject;
+	}
+	m_objects.clear();
+	ShutdownPhysics();
+	InitPhysics();
+	m_pWorld->setDebugDrawer(m_pDebugDrawer);
+}
+
+void App::PlayerSelection(btRigidBody* pBody)
+{
+	for (GameObjects::iterator iter = m_objects.begin(); iter != m_objects.end(); ++iter)
+	{
+		if ((*iter)->GetRigidBody() == pBody)
+		{
+			Player = *iter;
 			return;
 		}
 	}
@@ -408,12 +421,10 @@ btVector3 App::GetPickingRay(int x, int y)
 	hor.normalize();
 	ver = hor.cross(rayForward);
 	ver.normalize();
-	
-
 	hor *= 2.0f * m_farPlane * tanFov;
 	ver *= 2.0f * m_farPlane * tanFov;
 
-	btScalar aspect = m_screenWidth / m_screenHeight;
+	btScalar aspect = m_screenWidth / (btScalar)m_screenHeight;
 	hor *= aspect;
 	btVector3 rayToCenter = rayFrom + rayForward;
 	btVector3 dHor = hor * 1.0f / float(m_screenWidth);

@@ -62,20 +62,18 @@ public:
 		const btVector3& initialPotation = btVector3(0.0f, 0.0f, 0.0f),
 		const btQuaternion& initialRotation = btQuaternion(0, 0, 1, 1));
 
-
-
 	void ShootBox(const btVector3& direction);
 	void DestroyGameObject(btRigidBody* pBody);
-	GameObject* FindGameObject(btRigidBody* pBody);
-
+	void GameObjectReset();
+	void PlayerSelection(btRigidBody* pBody);
 	btVector3 GetPickingRay(int x, int y);
 	bool Raycast(const btVector3& startPosition, const btVector3& direction, RayResult& output);
 
-	
 	void CheckForCollisionEvents();
 	virtual void CollisionEvent(btRigidBody* pBody0, btRigidBody* pBody1);
 	virtual void SeparationEvent(btRigidBody* pBody0, btRigidBody* pBody1);
 
+	GameObject* FindGameObject(btRigidBody* pBody);
 	//===========================
 	//Custom
 	//===========================
@@ -103,6 +101,7 @@ protected:
 	btClock m_clock;
 
 	GameObjects m_objects;
+	//GameObjects b_objects;
 	DebugDrawer* m_pDebugDrawer;
 
 	btVector3 CameraRight;

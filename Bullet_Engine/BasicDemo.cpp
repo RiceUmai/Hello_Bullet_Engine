@@ -1,5 +1,14 @@
 #include "BasicDemo.h"
 
+
+BasicDemo::BasicDemo() :
+	App(),
+	m_bApplyForce(false),
+	Movement(false),
+	MovementVelocity(0, 0, 0)
+{
+}
+
 void BasicDemo::InitPhysics()
 {
 	m_pCollisionConfiguration = new btDefaultCollisionConfiguration();
@@ -37,18 +46,22 @@ void BasicDemo::CreateObjects()
 	//m_pWorld->addRigidBody(pRigidBody);
 	
 	GameObject* m_Obj;
-	m_Obj = CreateGameObject(new btBoxShape(btVector3(1, 50, 50)), 0.0f, btVector3(0.2f, 0.6f, 0.6f), btVector3(0.0f, 0.0f, 0.0f));
-	m_Obj->SetTag("Ground");
-	m_Obj->SetName("Ground");
+	CreateGameObject(new btBoxShape(btVector3(1, 100, 100)), 0.0f, btVector3(0.2f, 0.6f, 0.6f), btVector3(0.0f, 0.0f, 0.0f));
+	Player = m_Obj = CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0f, btVector3(0.0f, 1.0f, 0.0f), btVector3(0.0f, 5.0f, -30.0f));
+	
+	//CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0f, btVector3(1.0f, 0.0f, 0.0f), btVector3(0.0f, 10.0f, 0.0f));
+	//CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0f, btVector3(1.0f, 0.0f, 0.0f), btVector3(0.0f, 20.0f, 0.0f));
 
-	m_Obj = CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0f, btVector3(0.0f, 1.0f, 0.0f), btVector3(10.0f, 5.0f, 0.0f));
-	m_Obj->SetTag("Player");
-	m_Obj->SetName("Player");
-	m_pBox = m_Obj;
+	for (int i = 0; i < 10; i++)
+	{
+		for (int j = 0; j < 10; j++)
+		{
+			CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0f, btVector3(i, j, 0), btVector3(j * 2, 10+ i * 2, 0));
+		}
 
-	CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0f, btVector3(1.0f, 0.0f, 0.0f), btVector3(0.0f, 10.0f, 0.0f));
-	CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0f, btVector3(1.0f, 0.0f, 0.0f), btVector3(0.0f, 20.0f, 0.0f));
+	}
 
+	//trigger object
 	m_pTrigger = new btCollisionObject();
 	m_pTrigger->setCollisionShape(new btBoxShape(btVector3(1.0f, 0.25f, 1.0f)));
 
@@ -63,8 +76,8 @@ void BasicDemo::CreateObjects()
 
 void BasicDemo::CollisionEvent(btRigidBody* pBody0, btRigidBody* pBody1)
 {
-	if (pBody0 == m_pBox->GetRigidBody() && pBody1 == m_pTrigger ||
-		pBody1 == m_pBox->GetRigidBody() && pBody0 == m_pTrigger)
+	if (pBody0 == Player->GetRigidBody() && pBody1 == m_pTrigger ||
+		pBody1 == Player->GetRigidBody() && pBody0 == m_pTrigger)
 	{
 		CreateGameObject(new btBoxShape(btVector3(2,2,2)), 1.0f, btVector3(0.3, 0.7, 0.3), btVector3(5, 10, 0));
 	}
@@ -77,35 +90,40 @@ void BasicDemo::Keyboard(unsigned char key, int x, int y)
 	switch (key)
 	{
 		//Player movement
+		//Player->GetRigidBody()->setActivationState(DISABLE_DEACTIVATION);
 	case 'w': {
-		//m_objects.back()->SetPosition(btVector3(10.0f, 100.0f, 10.0f));
-		btVector3 velocity = (CameraFront) * 50;
-		//m_objects.at(1)->GetRigidBody()->setLinearVelocity(velocity);
-		Player->GetRigidBody()->applyCentralForce(velocity);
-
+		MovementVelocity = (CameraFront) * 50;
+		Movement = true;
+		Player->GetRigidBody()->setActivationState(DISABLE_DEACTIVATION);
 		break;
 	}
 	case 's': {
-		btVector3 velocity = (-CameraFront) * 50;
-		Player->GetRigidBody()->applyCentralForce(velocity);
+		MovementVelocity = (-CameraFront) * 50;
+		Movement = true;
+		Player->GetRigidBody()->setActivationState(DISABLE_DEACTIVATION);
 		break;
 	}
 
 	case 'a': {
-		btVector3 velocity = (-CameraRight) * 50;
-		Player->GetRigidBody()->applyCentralForce(velocity);
+		MovementVelocity = (-CameraRight) * 50;
+		Movement = true;
+		Player->GetRigidBody()->setActivationState(DISABLE_DEACTIVATION);
 		break;
 	}
 
 	case 'd': {
-		btVector3 velocity = (CameraRight) * 50;
-		Player->GetRigidBody()->applyCentralForce(velocity);
+		MovementVelocity = (CameraRight) * 50;
+		Movement = true;
+		Player->GetRigidBody()->setActivationState(DISABLE_DEACTIVATION);
 		break;
 	}
 	//space bar
 	case ' ': {
-		btVector3 velocity = btVector3(0.0f, 50.0f, 0.0f);
-		Player->GetRigidBody()->applyCentralForce(velocity);
+		//btVector3 velocity = btVector3(0.0f, 50.0f, 0.0f);
+		//Player->GetRigidBody()->applyCentralForce(velocity);
+		
+		m_bApplyForce = true;
+		Player->GetRigidBody()->setActivationState(DISABLE_DEACTIVATION);
 		break;
 	}
 	default:
@@ -118,8 +136,57 @@ void BasicDemo::KeyboardUp(unsigned char key, int x, int y)
 	App::KeyboardUp(key, x, y);
 	switch (key)
 	{
+
+	case 'w': {
+		Movement = false;
+		MovementVelocity = btVector3(0, 0, 1);
+		Player->GetRigidBody()->forceActivationState(ACTIVE_TAG);
 		break;
+	}
+	case 's': {
+		Movement = false;
+		MovementVelocity = btVector3(0, 0, -1);
+		Player->GetRigidBody()->forceActivationState(ACTIVE_TAG);
+		break;
+	}
+
+	case 'a': {
+		Movement = false;
+		MovementVelocity = btVector3(1, 0, 0);
+		Player->GetRigidBody()->forceActivationState(ACTIVE_TAG);
+		break;
+	}
+
+	case 'd': {
+		Movement = false;
+		MovementVelocity = btVector3(-1, 0, 0);
+		Player->GetRigidBody()->forceActivationState(ACTIVE_TAG);
+		break;
+	}
+
+	case ' ' : {
+		m_bApplyForce = false;
+		Player->GetRigidBody()->forceActivationState(ACTIVE_TAG);
+		break;
+	}
+		
 	default:
 		break;
+	}
+}
+
+void BasicDemo::UpdateScene(float dt)
+{
+	App::UpdateScene(dt);
+	
+	if (m_bApplyForce)
+	{
+		if (!Player) return;
+		Player->GetRigidBody()->applyCentralForce(btVector3(0, 30, 0));
+	}
+
+	if(Movement)
+	{
+		Player->GetRigidBody()->applyCentralForce(MovementVelocity);
 	}
 }
