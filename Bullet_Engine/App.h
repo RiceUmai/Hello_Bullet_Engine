@@ -10,7 +10,12 @@
 #include "DebugDrawer.h"
 
 #include <vector>
+#include <set>
+#include <iterator>
+#include <algorithm>
 typedef std::vector<GameObject*> GameObjects;
+typedef std::pair<const btRigidBody*, const btRigidBody*> CollisionPair;
+typedef std::set<CollisionPair> CollisionPairs;
 
 #include <iostream>
 
@@ -61,8 +66,15 @@ public:
 
 	void ShootBox(const btVector3& direction);
 	void DestroyGameObject(btRigidBody* pBody);
+	GameObject* FindGameObject(btRigidBody* pBody);
+
 	btVector3 GetPickingRay(int x, int y);
 	bool Raycast(const btVector3& startPosition, const btVector3& direction, RayResult& output);
+
+	
+	void CheckForCollisionEvents();
+	virtual void CollisionEvent(btRigidBody* pBody0, btRigidBody* pBody1);
+	virtual void SeparationEvent(btRigidBody* pBody0, btRigidBody* pBody1);
 
 	//===========================
 	//Custom
@@ -88,7 +100,6 @@ protected:
 	btConstraintSolver* m_pSolver;
 	btDynamicsWorld* m_pWorld;
 
-	//OpenGLMotionState* m_pMotionState;
 	btClock m_clock;
 
 	GameObjects m_objects;
@@ -96,6 +107,8 @@ protected:
 
 	btVector3 CameraRight;
 	btVector3 CameraFront;
+
+	CollisionPairs m_pairsLastUpdate;
 
 	float DeltaTime;
 

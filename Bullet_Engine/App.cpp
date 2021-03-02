@@ -78,35 +78,32 @@ void App::Keyboard(unsigned char key, int x, int y)
 	//Player movement
 	case 'w': {
 		//m_objects.back()->SetPosition(btVector3(10.0f, 100.0f, 10.0f));
-		btVector3 velocity = m_objects.at(1)->GetRigidBody()->getLinearVelocity() + (CameraFront);
+		btVector3 velocity =(CameraFront) * 50;
 		//m_objects.at(1)->GetRigidBody()->setLinearVelocity(velocity);
-		Player->GetRigidBody()->setLinearVelocity(velocity);
+		Player->GetRigidBody()->applyCentralForce(velocity);
 
 		break;
 	}
 	case 's': {
-		btVector3 velocity = m_objects.at(1)->GetRigidBody()->getLinearVelocity() + (-CameraFront);
-		Player->GetRigidBody()->setLinearVelocity(velocity);
+		btVector3 velocity = (-CameraFront) * 50;
+		Player->GetRigidBody()->applyCentralForce(velocity);
 		break;
 	}
 		
 	case 'a': {
-		btVector3 velocity = m_objects.at(1)->GetRigidBody()->getLinearVelocity() + (-CameraRight);
-		Player->GetRigidBody()->setLinearVelocity(velocity);
+		btVector3 velocity = (-CameraRight) * 50;
+		Player->GetRigidBody()->applyCentralForce(velocity);
 		break;
 	}
 
 	case 'd': {
-		btVector3 velocity = m_objects.at(1)->GetRigidBody()->getLinearVelocity() + (CameraRight);
-		Player->GetRigidBody()->setLinearVelocity(velocity);
-		//m_objects.at(1)->GetMotionState()->getWorldTransform(transform);
-		//m_objects.at(1)->SetPosition(vectortest1 + transform.getOrigin());
+		btVector3 velocity = (CameraRight) * 50;
+		Player->GetRigidBody()->applyCentralForce(velocity);
 		break;
 	}
 	case ' ': {
-		//btVector3 velocity = m_objects.at(1)->GetRigidBody()->getLinearVelocity() + btVector3(0.0f, 2.0f, 0.0f);
-		btVector3 velocity = btVector3(0.0f, 10.0f, 0.0f);
-		Player->GetRigidBody()->setLinearVelocity(velocity);
+		btVector3 velocity = btVector3(0.0f, 50.0f, 0.0f);
+		Player->GetRigidBody()->applyCentralForce(velocity);
  		std::cout << velocity.y() << std::endl;
 		break;
 	}
@@ -181,17 +178,19 @@ void App::Reshape(int w, int h)
 
 void App::Idle()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	UpadateCamera();
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//UpadateCamera();
 
-	float dt = m_clock.getTimeMilliseconds();
-	m_clock.reset();
-	DeltaTime = dt / 1000.0f;
-	UpdateScene(DeltaTime);
+	//float dt = m_clock.getTimeMilliseconds();
+	//m_clock.reset();
+	//DeltaTime = dt / 1000.0f;
+	//UpdateScene(DeltaTime);
 
-	//DrawBox(btVector3(5, 5, 5));
-	RenderScene(DeltaTime);
-	glutSwapBuffers();
+	////DrawBox(btVector3(5, 5, 5));
+	//RenderScene(DeltaTime);
+	//glutSwapBuffers();
+
+	glutPostRedisplay();
 }
 
 void App::Mouse(int button, int state, int x, int y)
@@ -209,6 +208,7 @@ void App::Mouse(int button, int state, int x, int y)
 	default:
 		break;
 	}
+	//glutPostRedisplay();
 }
 
 void App::MouseWheel(int button, int dir, int x, int y)
@@ -233,6 +233,17 @@ void App::Motion(int x, int y)
 
 void App::Display()
 { 
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	UpadateCamera();
+
+	float dt = m_clock.getTimeMilliseconds();
+	m_clock.reset();
+	DeltaTime = dt / 1000.0f;
+	UpdateScene(DeltaTime);
+
+	//DrawBox(btVector3(5, 5, 5));
+	RenderScene(DeltaTime);
+	glutSwapBuffers();
 }
 
 void App::RenderScene(float dt)
@@ -251,7 +262,7 @@ void App::RenderScene(float dt)
 		//std::cout << pObj->GetRigidBody()->getMass()<< std::endl;
 		
 	}
-	m_pWorld->debugDrawWorld();
+	m_pWorld->debugDrawWorld();	
 }
 
 void App::UpdateScene(float dt)
@@ -260,6 +271,7 @@ void App::UpdateScene(float dt)
 	{
 		m_pWorld->stepSimulation(dt);
 	}
+	CheckForCollisionEvents();
 }
 
 void App::UpadateCamera()
@@ -295,14 +307,26 @@ void App::UpadateCamera()
 	m_cameraPosition[1] = cameraPosition.getY();
 	m_cameraPosition[2] = cameraPosition.getZ();
 	
+
+	//=============================
+	//Custom
+	//=============================
+	btTransform transform;
+	Player->GetMotionState()->getWorldTransform(transform);
+
+	m_cameraPosition[0] += transform.getOrigin().getX();
+	m_cameraPosition[1] += transform.getOrigin().getY();
+	m_cameraPosition[2] += transform.getOrigin().getZ();
+	
+	m_cameraTarget[0] = transform.getOrigin().getX();
+	m_cameraTarget[1] = transform.getOrigin().getY();
+	m_cameraTarget[2] = transform.getOrigin().getZ();
+
 	gluLookAt(m_cameraPosition[0], m_cameraPosition[1], m_cameraPosition[2],
 		m_cameraTarget[0], m_cameraTarget[1], m_cameraTarget[2],
 		m_upVector.getX(), m_upVector.getY(), m_upVector.getZ());
 
 
-	//=============================
-	//Custom
-	//=============================
 	btVector3 rayFrom = m_cameraPosition;
 	btVector3 rayForward = (m_cameraTarget - m_cameraPosition);
 	CameraFront = rayForward.normalize();
@@ -353,6 +377,18 @@ void App::DestroyGameObject(btRigidBody* pBody)
 			return;
 		}
 	}
+}
+
+GameObject* App::FindGameObject(btRigidBody* pBody)
+{
+	for (GameObjects::iterator iter = m_objects.begin(); iter != m_objects.end(); ++iter)
+	{
+		if ((*iter)->GetRigidBody() == pBody)
+		{
+			return *iter;
+		}
+	}
+	return 0;
 }
 
 btVector3 App::GetPickingRay(int x, int y)
@@ -412,6 +448,68 @@ bool App::Raycast(const btVector3& startPosition, const btVector3& direction, Ra
 	}
 
 	return false;
+}
+
+void App::CheckForCollisionEvents()
+{
+	CollisionPairs pairsThisUpdate;
+	
+	for(int i = 0; i < m_pDispatcher->getNumManifolds(); ++i)
+	{
+		btPersistentManifold* pManifold = m_pDispatcher->getManifoldByIndexInternal(i);
+		if (pManifold->getNumContacts() > 0)
+		{
+			const btRigidBody* pBody0 = static_cast<const btRigidBody*>(pManifold->getBody0());
+			const btRigidBody* pBody1 = static_cast<const btRigidBody*>(pManifold->getBody1());
+		
+			bool const swapped = pBody0 > pBody1;
+			const btRigidBody* pSortedBodyA = swapped ? pBody1 : pBody0;
+			const btRigidBody* pSortedBodyB = swapped ? pBody0 : pBody1;
+
+			CollisionPair thisPair = std::make_pair(pSortedBodyA, pSortedBodyB);
+			pairsThisUpdate.insert(thisPair);
+
+			if (m_pairsLastUpdate.find(thisPair) == m_pairsLastUpdate.end())
+			{
+				CollisionEvent((btRigidBody*)pBody0, (btRigidBody*)pBody1);
+			}
+		}
+	}
+	
+	CollisionPairs removedPairs;
+
+	std::set_difference(m_pairsLastUpdate.begin(), m_pairsLastUpdate.end(),
+						pairsThisUpdate.begin(), pairsThisUpdate.end(),
+						std::inserter(removedPairs, removedPairs.end()));
+
+	for (CollisionPairs::const_iterator iter = removedPairs.begin(); iter != removedPairs.end(); ++iter)
+	{
+		SeparationEvent((btRigidBody*)iter->first, (btRigidBody*)iter->second);
+	}
+
+	m_pairsLastUpdate = pairsThisUpdate;
+}
+
+void App::CollisionEvent(btRigidBody* pBody0, btRigidBody* pBody1)
+{
+	GameObject* pObj0 = FindGameObject(pBody0);
+	GameObject* pObj1 = FindGameObject(pBody1);
+
+	if (!pObj0 || !pObj1) return;
+	
+	pObj0->SetColor(btVector3(1.0, 1.0, 1.0));
+	pObj1->SetColor(btVector3(1.0, 1.0, 1.0));
+}
+
+void App::SeparationEvent(btRigidBody* pBody0, btRigidBody* pBody1)
+{
+	GameObject* pObj0 = FindGameObject(pBody0);
+	GameObject* pObj1 = FindGameObject(pBody1);
+	
+	if (!pObj0 || !pObj1) return;
+
+	pObj0->SetColor(btVector3(0.0, 0.0, 0.0));
+	pObj1->SetColor(btVector3(0.0, 0.0, 0.0));
 }
 
 GameObject* App::FindGameObject(std::string name)

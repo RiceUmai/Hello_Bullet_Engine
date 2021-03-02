@@ -46,4 +46,5 @@ void BasicDemo::CreateObjects()
 	m_Obj->SetName("Player");
 
 	CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0f, btVector3(1.0f, 0.0f, 0.0f), btVector3(0.0f, 10.0f, 0.0f));
+	CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0f, btVector3(1.0f, 0.0f, 0.0f), btVector3(0.0f, 20.0f, 0.0f));
 }

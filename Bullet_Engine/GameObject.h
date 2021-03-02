@@ -22,7 +22,7 @@ public:
 
 	btVector3 GetColor() { return m_color; }
 
-
+	void SetColor(const btVector3& color) { m_color = color; }
 //=====================================
 //Custom
 //=====================================
