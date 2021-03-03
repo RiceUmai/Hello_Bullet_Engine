@@ -55,7 +55,6 @@ void App::init()
 	m_pDebugDrawer->setDebugMode(0);
 	m_pWorld->setDebugDrawer(m_pDebugDrawer);
 
-
 	//==========================
 	//Custom
 	//==========================
@@ -117,16 +116,16 @@ void App::Special(int key, int x, int y)
 	switch (key)
 	{
 	case GLUT_KEY_LEFT:
-		RotateCamera(m_cameraYaw, +CAMERA_STEP_SIZE);
+		RotateCamera(m_cameraYaw, +CAMERA_STEP_SIZE, false);
 		break;
 	case GLUT_KEY_RIGHT:
-		RotateCamera(m_cameraYaw, -CAMERA_STEP_SIZE);
+		RotateCamera(m_cameraYaw, -CAMERA_STEP_SIZE, false);
 		break;
 	case GLUT_KEY_UP:
-		RotateCamera(m_cameraPitch, +CAMERA_STEP_SIZE);
+		RotateCamera(m_cameraPitch, +CAMERA_STEP_SIZE, true);
 		break;
 	case GLUT_KEY_DOWN:
-		RotateCamera(m_cameraPitch,-CAMERA_STEP_SIZE);
+		RotateCamera(m_cameraPitch,-CAMERA_STEP_SIZE, true);
 		break;
 	default:
 		break;
@@ -325,11 +324,11 @@ void App::UpadateCamera()
 
 //=================================
 //Custom
-void App::RotateCamera(float& angle, float value)
+void App::RotateCamera(float& angle, float value, bool Move_mode)
 {
-	angle -= value;
-	if (angle <= -90) angle = -90;
-	if (angle >= 90) angle = 90;
+	angle += value;
+	if (angle <= -90 && Move_mode) angle = -90;
+	if (angle >= 90 && Move_mode) angle = 90;
 	UpadateCamera();
 }
 //=================================
@@ -617,7 +616,6 @@ void App::DrawShape(btScalar* transform, const btCollisionShape* pShape, const b
 GameObject* App::CreateGameObject(btCollisionShape* pShape, const float& mass, const btVector3& color, const btVector3& initialPotation, const btQuaternion& initialRotation)
 {
 	GameObject* pObject = new GameObject(pShape, mass, color, initialPotation, initialRotation);
-
 	m_objects.push_back(pObject);
 	if (m_pWorld)
 	{

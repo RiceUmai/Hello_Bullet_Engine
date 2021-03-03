@@ -13,7 +13,6 @@ GameObject::GameObject(btCollisionShape* pShape, float mass, const btVector3& co
 	transform.setRotation(initialRotation);
 
 	m_pMotionState = new OpenGLMotionState(transform);
-
 	btVector3 locallnertia(0, 0, 0);
 
 	if (mass != 0.0f)

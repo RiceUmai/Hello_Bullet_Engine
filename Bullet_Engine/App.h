@@ -51,7 +51,7 @@ public:
 	virtual void ShutdownPhysics() {};
 
 	void UpadateCamera();
-	void RotateCamera(float& angle, float value);
+	void RotateCamera(float& angle, float value, bool Move_mode);
 	void ZoomCamera(float distance);
 
 	void DrawBox(const btVector3& halfSize);

@@ -1,5 +1,5 @@
 #include "BasicDemo.h"
-
+#include "Chain.h"
 
 BasicDemo::BasicDemo() :
 	App(),
@@ -45,20 +45,21 @@ void BasicDemo::CreateObjects()
 
 	//m_pWorld->addRigidBody(pRigidBody);
 	
-	GameObject* m_Obj;
+	//GameObject* m_Obj;
 	CreateGameObject(new btBoxShape(btVector3(1, 100, 100)), 0.0f, btVector3(0.2f, 0.6f, 0.6f), btVector3(0.0f, 0.0f, 0.0f));
-	Player = m_Obj = CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0f, btVector3(0.0f, 1.0f, 0.0f), btVector3(0.0f, 5.0f, -30.0f));
+	Player = CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0f, btVector3(0.0f, 1.0f, 0.0f), btVector3(0.0f, 5.0f, -30.0f));
+	GameObject* Player2 = CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0f, btVector3(0.0f, 1.0f, 0.0f), btVector3(0.0f, 5.0f, -30.0f));
 	
 	//CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0f, btVector3(1.0f, 0.0f, 0.0f), btVector3(0.0f, 10.0f, 0.0f));
 	//CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0f, btVector3(1.0f, 0.0f, 0.0f), btVector3(0.0f, 20.0f, 0.0f));
 
+	//Block 10 * 10 Object 
 	for (int i = 0; i < 10; i++)
 	{
 		for (int j = 0; j < 10; j++)
 		{
 			CreateGameObject(new btBoxShape(btVector3(1, 1, 1)), 1.0f, btVector3(i, j, 0), btVector3(j * 2, 10+ i * 2, 0));
 		}
-
 	}
 
 	//trigger object
@@ -72,6 +73,24 @@ void BasicDemo::CreateObjects()
 	m_pTrigger->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
 	m_pWorld->addCollisionObject(m_pTrigger);
 
+
+	GameObjects test;
+	for (int i = 0; i < 29; ++i)
+	{
+		float mass = 1;
+		if (i == 0) mass = 0;
+		GameObject* p_obj = CreateGameObject(new btBoxShape(btVector3(1, 1, 0.25)), mass, btVector3(0.5f, i * 0.029, i * 0.029), btVector3(10, 60 - i * 2, -3));
+		test.push_back(p_obj);
+	}
+	for (int i = 0; i < 28; ++i)
+	{
+		btPoint2PointConstraint* test1 = new btPoint2PointConstraint(*(test[i]->GetRigidBody()), *(test[i + 1]->GetRigidBody()), btVector3(-1.0, 0.5, 0), btVector3(1.0, 0.5, 0));
+		m_pWorld->addConstraint(test1);
+
+		btPoint2PointConstraint* test2 = new btPoint2PointConstraint(*(test[i]->GetRigidBody()), *(test[i + 1]->GetRigidBody()), btVector3(-1.0, -0.5, 0), btVector3(1.0, -0.5, 0));
+		m_pWorld->addConstraint(test2);
+	}
+	
 }
 
 void BasicDemo::CollisionEvent(btRigidBody* pBody0, btRigidBody* pBody1)
@@ -90,7 +109,6 @@ void BasicDemo::Keyboard(unsigned char key, int x, int y)
 	switch (key)
 	{
 		//Player movement
-		//Player->GetRigidBody()->setActivationState(DISABLE_DEACTIVATION);
 	case 'w': {
 		MovementVelocity = (CameraFront) * 50;
 		Movement = true;
