@@ -238,11 +238,42 @@ void App::RenderScene(float dt)
 	{
 		GameObject* pObj = *i;
 		pObj->GetTransform(transform);
-		DrawShape(transform, pObj->GetShape(), pObj->GetColor());
 		//std::cout << pObj->GetRigidBody()->getMass()<< std::endl;
+		DrawShape(transform, pObj->GetShape(), pObj->GetColor());
 		
 	}
 	m_pWorld->debugDrawWorld();	
+}
+
+void App::DrawShape(btScalar* transform, const btCollisionShape* pShape, const btVector3& color)
+{
+	glColor3f(color.x(), color.y(), color.z());
+
+	glPushMatrix();
+	glMultMatrixf(transform);
+
+	switch (pShape->getShapeType())
+	{
+	case BOX_SHAPE_PROXYTYPE:
+	{
+		const btBoxShape* box = static_cast<const btBoxShape*>(pShape);
+		btVector3 halfSize = box->getHalfExtentsWithMargin();
+		DrawBox(halfSize);
+		break;
+	}
+	case SPHERE_SHAPE_PROXYTYPE:
+	{
+		const btSphereShape* sphere = static_cast<const btSphereShape*>(pShape);
+		float radius = sphere->getMargin();
+		DrawSphere(radius);
+		break;
+	}
+
+
+	default:
+		break;
+	}
+	glPopMatrix();
 }
 
 void App::UpdateScene(float dt)
@@ -590,27 +621,40 @@ void App::DrawBox(const btVector3 &halfSize)
 	//glPopMatrix();
 }
 
-void App::DrawShape(btScalar* transform, const btCollisionShape* pShape, const btVector3& color)
+void App::DrawSphere(const btScalar& radius)
 {
-	glColor3f(color.x(), color.y(), color.z());
+	static int lateralSegments = 25;
+	static int longitudinalSegments = 25;
 
-	glPushMatrix();
-	glMultMatrixf(transform);
-
-	switch (pShape->getShapeType())
+	for (int i = 0; i <= lateralSegments; i++)
 	{
-		case BOX_SHAPE_PROXYTYPE :
-		{
-			const btBoxShape* box = static_cast<const btBoxShape*>(pShape);
-			btVector3 halfSize = box->getHalfExtentsWithMargin();
-			DrawBox(halfSize);
-			break;
-		}
+		btScalar lat0 = SIMD_PI * (-btScalar(0.5f) + (btScalar) (i - 1) / lateralSegments);
+		btScalar z0 = radius * sin(lat0);
+		btScalar zr0 = radius * cos(lat0);
 
-		default:
-			break;
+		btScalar lat1 = SIMD_PI * (-btScalar(0.5f) + (btScalar) i / lateralSegments);
+		btScalar z1 = radius * sin(lat1);
+		btScalar zr1 = radius * cos(lat1);
+
+		glBegin(GL_QUAD_STRIP);
+		for (int j = 0; j <= longitudinalSegments; j++)
+		{
+			btScalar lng = 2 * SIMD_PI * (btScalar)(j - 1) / longitudinalSegments;
+			btScalar x = cos(lng);
+			btScalar y = sin(lng);
+
+			btVector3 normal = btVector3(x * zr0, y * zr0, z0);
+			normal.normalize();
+			glNormal3f(normal.x(), normal.y(), normal.z());
+			glVertex3f(x * zr0, y * zr0, z0);
+
+			normal = btVector3(x * zr1, y * zr1, z1);
+			normal.normalize();
+			glNormal3f(normal.x(), normal.y(), normal.z());
+			glVertex3f(x * zr1, y * zr1, z1);
 		}
-	glPopMatrix();
+		glEnd();
+	}
 }
 
 GameObject* App::CreateGameObject(btCollisionShape* pShape, const float& mass, const btVector3& color, const btVector3& initialPotation, const btQuaternion& initialRotation)

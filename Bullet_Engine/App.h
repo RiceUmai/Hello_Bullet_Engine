@@ -54,8 +54,10 @@ public:
 	void RotateCamera(float& angle, float value, bool Move_mode);
 	void ZoomCamera(float distance);
 
-	void DrawBox(const btVector3& halfSize);
 	void DrawShape(btScalar* transform, const btCollisionShape* pShape, const btVector3& color);
+	void DrawBox(const btVector3& halfSize);
+	void DrawSphere(const btScalar &radius);
+
 	GameObject* CreateGameObject(btCollisionShape* pShape,
 		const float& mass,
 		const btVector3& color = btVector3(1.0f, 1.0f, 1.0f),

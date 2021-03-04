@@ -62,6 +62,9 @@ void BasicDemo::CreateObjects()
 		}
 	}
 
+	CreateGameObject(new btSphereShape(1.0f), 1.0, btVector3(0.7f, 0.7f, 0.0f), btVector3(-5.0, 10.0f, 0.0f));
+
+
 	//trigger object
 	m_pTrigger = new btCollisionObject();
 	m_pTrigger->setCollisionShape(new btBoxShape(btVector3(1.0f, 0.25f, 1.0f)));
@@ -73,21 +76,22 @@ void BasicDemo::CreateObjects()
 	m_pTrigger->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
 	m_pWorld->addCollisionObject(m_pTrigger);
 
-
-	GameObjects test;
+	GameObjects m_obj;
 	for (int i = 0; i < 29; ++i)
 	{
 		float mass = 1;
-		if (i == 0) mass = 0;
-		GameObject* p_obj = CreateGameObject(new btBoxShape(btVector3(1, 1, 0.25)), mass, btVector3(0.5f, i * 0.029, i * 0.029), btVector3(10, 60 - i * 2, -3));
-		test.push_back(p_obj);
+		GameObject* p_obj;
+		
+		if (i == 0) mass = 0;		
+		p_obj = CreateGameObject(new btBoxShape(btVector3(0.9, 0.25, 0.25)), mass, btVector3(0.5f, i * 0.029, i * 0.029), btVector3(10, 60 - i * 2, -3));
+		m_obj.push_back(p_obj);
 	}
 	for (int i = 0; i < 28; ++i)
 	{
-		btPoint2PointConstraint* test1 = new btPoint2PointConstraint(*(test[i]->GetRigidBody()), *(test[i + 1]->GetRigidBody()), btVector3(-1.0, 0.5, 0), btVector3(1.0, 0.5, 0));
+		btPoint2PointConstraint* test1 = new btPoint2PointConstraint(*(m_obj[i]->GetRigidBody()), *(m_obj[i + 1]->GetRigidBody()), btVector3(-1.0, 0.5, 0), btVector3(1.0, 0.5, 0));
 		m_pWorld->addConstraint(test1);
 
-		btPoint2PointConstraint* test2 = new btPoint2PointConstraint(*(test[i]->GetRigidBody()), *(test[i + 1]->GetRigidBody()), btVector3(-1.0, -0.5, 0), btVector3(1.0, -0.5, 0));
+		btPoint2PointConstraint* test2 = new btPoint2PointConstraint(*(m_obj[i]->GetRigidBody()), *(m_obj[i + 1]->GetRigidBody()), btVector3(-1.0, -0.5, 0), btVector3(1.0, -0.5, 0));
 		m_pWorld->addConstraint(test2);
 	}
 	
