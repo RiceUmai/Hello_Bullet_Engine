@@ -1,7 +1,8 @@
 #pragma once
 
 #include <Windows.h>
-#include <GL/GL.h>
+
+#include <GL/glew.h>
 #include <GL/freeglut.h>
 
 #include <BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>

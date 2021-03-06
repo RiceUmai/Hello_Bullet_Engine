@@ -20,6 +20,7 @@ App::App() :
 	m_pWorld(0),
 	DeltaTime(0)
 {
+
 }
 
 App::~App()

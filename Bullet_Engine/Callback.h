@@ -65,6 +65,14 @@ int glutMain(int argc, char** argv, int width, int height, const char* title, Ap
 	glutCreateWindow(title);
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 
+	if (glewInit() != GLEW_OK)
+	{
+		std::cout<< "failed glewInit" << std::endl;
+		return -1;
+	}
+
+	printf("%s  \n", glGetString(GL_VERSION));
+	
 	g_pApp->init();
 
 	glutKeyboardFunc(KeyboardCallback);
