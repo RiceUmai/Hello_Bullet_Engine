@@ -140,9 +140,6 @@ void BasicDemo::Keyboard(unsigned char key, int x, int y)
 	}
 	//space bar
 	case ' ': {
-		//btVector3 velocity = btVector3(0.0f, 50.0f, 0.0f);
-		//Player->GetRigidBody()->applyCentralForce(velocity);
-		
 		m_bApplyForce = true;
 		Player->GetRigidBody()->setActivationState(DISABLE_DEACTIVATION);
 		break;

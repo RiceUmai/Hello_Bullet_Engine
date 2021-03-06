@@ -1,4 +1,4 @@
-#include "App.h"
+﻿#include "App.h"
 #include "bullet/CommonInterfaces/CommonRigidBodyBase.h"
 
 #define RADIANS_PER_DEGREE 0.01745329f
@@ -55,15 +55,6 @@ void App::init()
 	m_pDebugDrawer = new DebugDrawer();
 	m_pDebugDrawer->setDebugMode(0);
 	m_pWorld->setDebugDrawer(m_pDebugDrawer);
-
-	//==========================
-	//Custom
-	//==========================
-	//Player = FindGameObject("Player");
-
-	//==========================
-	//==========================
-
 }
 
 void App::Keyboard(unsigned char key, int x, int y)
@@ -112,6 +103,12 @@ void App::KeyboardUp(unsigned char key, int x, int y)
 	
 }
 
+/// <summary>
+/// キーボード矢印
+/// </summary>
+/// <param name="key"></param>
+/// <param name="x"></param>
+/// <param name="y"></param>
 void App::Special(int key, int x, int y)
 {
 	switch (key)
@@ -148,18 +145,6 @@ void App::Reshape(int w, int h)
 
 void App::Idle()
 {
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//UpadateCamera();
-
-	//float dt = m_clock.getTimeMilliseconds();
-	//m_clock.reset();
-	//DeltaTime = dt / 1000.0f;
-	//UpdateScene(DeltaTime);
-
-	////DrawBox(btVector3(5, 5, 5));
-	//RenderScene(DeltaTime);
-	//glutSwapBuffers();
-
 	glutPostRedisplay();
 }
 
@@ -189,7 +174,6 @@ void App::Mouse(int button, int state, int x, int y)
 	default:
 		break;
 	}
-	//glutPostRedisplay();
 }
 
 void App::MouseWheel(int button, int dir, int x, int y)
@@ -222,19 +206,17 @@ void App::Display()
 	DeltaTime = dt / 1000.0f;
 	UpdateScene(DeltaTime);
 
-	//DrawBox(btVector3(5, 5, 5));
 	RenderScene(DeltaTime);
 	glutSwapBuffers();
 }
 
+/// <summary>
+/// シーンレンダリング
+/// </summary>
+/// <param name="dt">Dleta Time</param>
 void App::RenderScene(float dt)
 {
 	btScalar transform[16];
-	//if (m_pWorld)
-	//{
-	//	m_pMotionState->GetWorldTransform(transform);
-	//	DrawBox(transform, btVector3(1,1,1), btVector3(1, 0, 0));
-	//}
 	for (GameObjects::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
 	{
 		GameObject* pObj = *i;
@@ -277,6 +259,10 @@ void App::DrawShape(btScalar* transform, const btCollisionShape* pShape, const b
 	glPopMatrix();
 }
 
+/// <summary>
+/// シーンアップデート
+/// </summary>
+/// <param name="dt">Dleta Time</param>
 void App::UpdateScene(float dt)
 {
 	if (m_pWorld)
@@ -322,6 +308,7 @@ void App::UpadateCamera()
 
 	//=============================
 	//Custom
+	//カメラはプレイヤーを追跡
 	//=============================
 	if (Player)
 	{
@@ -352,10 +339,9 @@ void App::UpadateCamera()
 	CameraRight = hor.normalize();
 	CameraFront.setY(0);
 	//==============================
+	//==============================
 }
 
-//=================================
-//Custom
 void App::RotateCamera(float& angle, float value, bool Move_mode)
 {
 	angle += value;
@@ -363,7 +349,6 @@ void App::RotateCamera(float& angle, float value, bool Move_mode)
 	if (angle >= 90 && Move_mode) angle = 90;
 	UpadateCamera();
 }
-//=================================
 
 void App::ZoomCamera(float distance)
 {

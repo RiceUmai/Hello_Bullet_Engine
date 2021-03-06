@@ -149,7 +149,7 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="BasicDemo.cpp" />
-    <ClCompile Include="Bullet_Engine.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="DebugDrawer.cpp" />
     <ClCompile Include="GameObject.cpp" />
   </ItemGroup>
