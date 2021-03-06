@@ -1,6 +1,8 @@
 # Hello_Bullet_Engine
 
-# 概要
+## 使用言語
+* C++
+
 ## 使用ライブラリ
 * Bullet Physics SDK：https://github.com/bulletphysics/bullet3
 * GLEW：http://glew.sourceforge.net/
@@ -13,6 +15,9 @@
 
 ## 使用ツール
 * Visual Studio 2019
+
+## 製作人数
+* 個人 
 
 ## 制作期間
 * 2020.02.26 ~ 製作中
@@ -28,6 +33,9 @@
 物理エンジンを触るのが初めてなので**自分のオリジナルコードが少ないですが**  
 次のプロジェットは物理エンジン、GLSL(Shaer)を使ってオリジナル物理シミュレーションプログラム（ゲーム）  
 作りを考えています。
+
+## guthub URL
+https://github.com/congibab/Hello_Bullet_Engine
 
 # プログラム実装画面
 <img src="doc/GameScene1.gif" width="49%">
