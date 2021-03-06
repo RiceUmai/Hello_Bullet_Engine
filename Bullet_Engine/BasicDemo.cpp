@@ -75,16 +75,16 @@ void BasicDemo::CreateObjects()
 
 	{
 		GameObjects m_obj;
-		for (int i = 0; i < 29; ++i)
+		for (int i = 0; i < 10; ++i)
 		{
 			float mass = 1;
 			GameObject* p_obj;
 		
 			if (i == 0) mass = 0;		
-			p_obj = CreateGameObject(new btBoxShape(btVector3(0.9, 0.25, 0.25)), mass, btVector3(0, i % 3, 0), btVector3(10, 60 , - i * 2));
+			p_obj = CreateGameObject(new btBoxShape(btVector3(0.9, 0.25, 0.25)), mass, btVector3(0, i % 3, 0), btVector3(10, 20 , -10 - i * 2));
 			m_obj.push_back(p_obj);
 		}
-		for (int i = 0; i < 28; ++i)
+		for (int i = 0; i < 9; ++i)
 		{
 			btPoint2PointConstraint* test1 = new btPoint2PointConstraint(*(m_obj[i]->GetRigidBody()), *(m_obj[i + 1]->GetRigidBody()), btVector3(-1.0, 0.5, 0), btVector3(1.0, 0.5, 0));
 			m_pWorld->addConstraint(test1);
@@ -92,6 +92,7 @@ void BasicDemo::CreateObjects()
 			btPoint2PointConstraint* test2 = new btPoint2PointConstraint(*(m_obj[i]->GetRigidBody()), *(m_obj[i + 1]->GetRigidBody()), btVector3(-1.0, -0.5, 0), btVector3(1.0, -0.5, 0));
 			m_pWorld->addConstraint(test2);
 		}
+		Player = m_obj[0];
 	}
 }
 
