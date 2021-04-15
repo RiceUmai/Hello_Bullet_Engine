@@ -34,7 +34,10 @@
 次のプロジェットは物理エンジン、GLSL(Shaer)を使ってオリジナル物理シミュレーションプログラム（ゲーム）  
 作りを考えています。
 
-## guthub URL
+## 動画(YouTube)
+https://www.youtube.com/watch?v=LPJUOyeQz5w
+
+## GitHub URL
 https://github.com/congibab/Hello_Bullet_Engine
 
 # プログラム実装画面
