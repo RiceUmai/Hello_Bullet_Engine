@@ -19,8 +19,11 @@
 ## 製作人数
 * 個人 
 
+## 製作者
+* イゴンヒ
+
 ## 制作期間
-* 2020.02.26 ~ 製作中
+* 2020.02.26 ~ 未定
 
 ## オリジナルコード比率
 * 7 : 3(参考サイト：オリジナル)
@@ -31,14 +34,13 @@
 
 ## 感想点
 物理エンジンを触るのが初めてなので**自分のオリジナルコードが少ないですが**  
-次のプロジェットは物理エンジン、GLSL(Shaer)を使ってオリジナル物理シミュレーションプログラム（ゲーム）  
-作りを考えています。
+次のプロジェットは物理エンジン、GLSL(Shaer)を使ってオリジナル物理シミュレーションプログラム（ゲーム）作りを考えています。
 
 ## 動画(YouTube)
-https://www.youtube.com/watch?v=LPJUOyeQz5w
+[https://www.youtube.com/watch?v=LPJUOyeQz5w](https://www.youtube.com/watch?v=LPJUOyeQz5w)
 
 ## GitHub URL
-https://github.com/congibab/Hello_Bullet_Engine
+[https://github.com/congibab/Hello_Bullet_Engine](https://github.com/congibab/Hello_Bullet_Engine)
 
 # プログラム実装画面
 <img src="doc/GameScene1.gif" width="49%">
@@ -59,6 +61,8 @@ https://github.com/congibab/Hello_Bullet_Engine
 * GameObject.cpp => オブジェクトクラス
 * DebugDrawer.cpp (btIDebugDraw継承) => 当たり判定表示
 * OpenGLMotionState.cpp (btDefaultMotionState継承) => オブジェクトのTransformを行列変換
+
+<div style="page-break-before:always"></div> 
 
 # シーン初期化
 ```cpp
@@ -102,6 +106,8 @@ GameObject::GameObject(btCollisionShape* pShape, float mass, const btVector3& co
 }
 ```
 
+<div style="page-break-before:always"></div> 
+
 # RayCast、座標変換
 <img src="doc/GameScene2.gif" width="49%">
 
@@ -117,6 +123,9 @@ GameObject::GameObject(btCollisionShape* pShape, float mass, const btVector3& co
 ## 説明
 * btPoint2PointConstraintクラスを使用チェーインを具現（赤ボックス）
 * チェーインは慣性に影響を受ける。
+
+<div style="page-break-before:always"></div> 
+
 
 ## ソースコード
 ```cpp
