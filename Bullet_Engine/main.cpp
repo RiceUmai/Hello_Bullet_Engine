@@ -1,4 +1,8 @@
-﻿
+﻿//参照
+//Learning Game Physics with Bullet Physics and OpenGL 
+//https://github.com/bulletphysics/bullet3
+
+
 #include "BasicDemo.h"
 #include "Callback.h"
 
