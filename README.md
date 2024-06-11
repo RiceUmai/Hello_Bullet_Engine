@@ -1,3 +1,6 @@
+# 한국어 포스팅 링크
+[https://first-hugo-blog.netlify.app/ko/posts/hello_bullet_engine/hello_bullet_engine/](https://first-hugo-blog.netlify.app/ko/posts/hello_bullet_engine/hello_bullet_engine/)
+
 # Hello_Bullet_Engine
 
 ## 使用言語
